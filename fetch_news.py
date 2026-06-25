@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoul
+from bs4 import BeautifulSoup
 
 def fetch_ticker_news(ticker: str) -> list:
     url = f"https://finance.yahoo.com/rss/headline?s={ticker}"
