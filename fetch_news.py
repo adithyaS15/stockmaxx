@@ -17,7 +17,7 @@ def fetch_ticker_news(ticker: str) -> list:
         print(f"Failed to fetch the news. HTTP status code is {response.status_code}")
         return
 
-    soup = BeautifulSoul(response.content, "html.parser")
+    soup = BeautifulSoup(response.content, "html.parser")
     items = soup.find_all("item")
 
     news_records = []
