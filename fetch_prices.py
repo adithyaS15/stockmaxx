@@ -17,8 +17,8 @@ def fetch_historical_data(ticker: str, period: str = "2y") -> list:
 	for _,row in df.iterrows():
 		record = {
 			"ticker": ticker,
-			"data": row["Data"].strftime("%Y-%m-%d")
-			"open": round(float(row["Open"]), 2)
+			"data": row["Data"].strftime("%Y-%m-%d"),
+			"open": round(float(row["Open"]), 2),
 			"high": round(float(row["High"]), 2),
 			"low": round(float(row["Low"]), 2),
 			"close": round(float(row["Close"]), 2),
@@ -28,7 +28,7 @@ def fetch_historical_data(ticker: str, period: str = "2y") -> list:
 
 	return records
 
-if __name__ == "__main__"
+if __name__ == "__main__":
 	TARGET_TICKER = "RELIANCE.NS"
 	historical_records = fetch_historical_data(TARGET_TICKER, period='2y') # maybe take 5 years?
 
