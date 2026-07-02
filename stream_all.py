@@ -2,7 +2,7 @@ import json
 import requests
 import yfinance as yf
 from datetime import datetime
-from bs4 import beautifulsoup4
+from bs4 import BeautifulSoup
 from google.cloud import pubsub_v1
 
 PROJECT_ID = ""
@@ -10,11 +10,11 @@ PRICE_TOPIC = "stockky-price-ingest"
 NEWS_TOPIC = "stockky-news-ingest"
 
 ASSET_MATRIX = {
-        "AAPL": {"search": "Apple+stock", "type": "stock"}
-        "NVDA": {"search": "NVIDIA+stock", "type": "stock"}
-        "AMD": {"search": "AMD+stock", "type": "stock"}
-        "META": {"search": "Meta+Platforms+stock", "type": "stock"}
-        "GOOGL": {"search": "Google+stock", "type": "stock"}
+        "AAPL": {"search": "Apple+stock", "type": "stock"},
+        "NVDA": {"search": "NVIDIA+stock", "type": "stock"},
+        "AMD": {"search": "AMD+stock", "type": "stock"},
+        "META": {"search": "Meta+Platforms+stock", "type": "stock"},
+        "GOOGL": {"search": "Google+stock", "type": "stock"},
         "BTC-USD": {"search": "Bitcoin+crypto", "type": "crypto"}
     }
 
