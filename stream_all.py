@@ -26,7 +26,7 @@ def publish_to_cloud(topic_id: str, data_dict: dict, publisher_client, project_i
         return future.result()
     except Exception as e:
         print(f"Cloud Streaming Error: {e}")
-        return none
+        return None
 
 def process_pipeline():
     publisher = pubsub_v1.PublisherClient()
