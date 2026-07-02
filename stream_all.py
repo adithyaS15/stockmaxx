@@ -29,7 +29,7 @@ def publish_to_cloud(topic_id: str, data_dict: dict, publisher_client, project_i
         return none
 
 def process_pipeline():
-    publisher = pubsub_v1.PublicherClient()
+    publisher = pubsub_v1.PublisherClient()
 
     print(f"=== Starting Multi-Asset Ingestion Pipeline | {datetime.now().strftime('%Y-%m-%d %H:%M')} ===")
     for ticker, config in ASSET_MATRIX.items():
