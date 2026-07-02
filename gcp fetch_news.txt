@@ -1,0 +1,82 @@
+import json
+import warnings
+from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+from google.cloud import pubsub_v1  # 👈 Added Google Cloud SDK Client
+
+warnings.filterwarnings("ignore")
+
+# Define your GCP Project Coordinates
+PROJECT_ID = "YOUR_GCP_PROJECT_ID"  # ⚠️ Replace with your actual GCP project ID
+TOPIC_ID = "stockky-news-ingest"
+
+def fetch_ticker_news(search_query: str, ticker_symbol: str) -> list:
+    url = f"https://news.google.com/rss/search?q={search_query}&hl=en-IN&gl=IN&ceid=IN:en"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code != 200: return []
+    except Exception: return []
+
+    soup = BeautifulSoup(response.content, "xml")
+    items = soup.find_all("item")
+
+    news_records = []
+    for item in items[:15]:
+        title = item.find("title").text if item.find("title") else ""
+        link = item.find("link").text if item.find("link") else ""
+        pub_date_raw = item.find("pubDate").text if item.find("pubDate") else ""
+
+        if " - " in title:
+            title = title.rsplit(" - ", 1)[0]
+
+        clean_date = None
+        if pub_date_raw:
+            try:
+                date_segment = pub_date_raw[:25].strip()
+                clean_date = datetime.strptime(date_segment, "%a, %d %b %Y %H:%M:%S").strftime("%Y-%m-%d")
+            except Exception:
+                clean_date = None
+
+        if title:
+            news_records.append({
+                "ticker": ticker_symbol,
+                "headline": title.strip(),
+                "date": clean_date,
+                "link": link.strip()
+            })
+
+    return news_records
+
+if __name__ == "__main__":
+    TARGET_TICKER = "RELIANCE.NS"
+    SEARCH_TERM = "RELIANCE+stock"
+
+    news_payload = fetch_ticker_news(SEARCH_TERM, TARGET_TICKER)
+
+    if news_payload:
+        print(f"\nExtracted {len(news_payload)} local news entries. Preparing cloud stream...")
+
+        # Initialize the GCP Pub/Sub Publisher Client
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+
+        success_count = 0
+        for record in news_payload:
+            try:
+                # Pub/Sub requires payloads to be sent as raw byte strings
+                serialized_data = json.dumps(record).encode("utf-8")
+
+                # Asynchronously publish the message to your GCP infrastructure
+                future = publisher.publish(topic_path, data=serialized_data)
+                # future.result() blocks momentarily to confirm receipt from Google
+                message_id = future.result()
+                success_count += 1
+            except Exception as cloud_err:
+                print(f"Failed streaming record: {cloud_err}")
+
+        print(f"🚀 SUCCESS: Streamed {success_count} headlines straight into Pub/Sub!")
