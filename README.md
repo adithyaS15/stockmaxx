@@ -1,2 +1,2 @@
-# stockky
+# stockmaxx
 A stock prediction project 
