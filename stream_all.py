@@ -32,13 +32,13 @@ def publish_to_cloud(topic_id: str, data_dict: dict, publisher_client, project_i
         future = publisher_client.publish(topic_path, data=serialized_data)
         return future.result()
     except Exception as e:
-        print(f"===Cloud Streaming Error: {e}")
+        print(f"❗ Cloud Streaming Error: {e}")
         return None
 
 def process_pipeline():
     publisher = pubsub_v1.PublisherClient()
 
-    print(f"=== Starting Multi-Asset Ingestion Pipeline | {datetime.now().strftime('%Y-%m-%d %H:%M')} ===")
+    print(f"🏁 Starting Multi-Asset Ingestion Pipeline | {datetime.now().strftime('%Y-%m-%d %H:%M')} 🏁")
 
     for ticker, config in ASSET_MATRIX.items():
         print(f"\nProcessing Asset Target: {ticker} ({config['type'].upper()})")
@@ -63,11 +63,11 @@ def process_pipeline():
 
                 msg_id = publish_to_cloud(PRICE_TOPIC, price_payload, publisher, PROJECT_ID)
                 if msg_id:
-                    print(f"===Market metrics successfully streamed to Pub/Sub.")
+                    print(f"🟢 Market metrics successfully streamed to Pub/Sub.")
             else:
-                print(f"===Price Fetch Failed: Empty dataset returned for {ticker}.")
+                print(f"❗ Price Fetch Failed: Empty dataset returned for {ticker}.")
         except Exception as pe:
-            print(f"===Price Extraction Crash on {ticker}: {pe}")
+            print(f"❗ Price Extraction Crash on {ticker}: {pe}")
 
         # --- PHASE B: FETCH & STREAM HEADLINES ---
         url = f"https://news.google.com/rss/search?q={config['search']}&hl=en-US&gl=US&ceid=US:en"
@@ -102,13 +102,13 @@ def process_pipeline():
                         msg_id = publish_to_cloud(NEWS_TOPIC, news_payload, publisher, PROJECT_ID)
                         if msg_id: news_count += 1
 
-                print(f"===Streamed {news_count} news headlines to Pub/Sub.")
+                print(f"🟢 Streamed {news_count} news headlines to Pub/Sub.")
             else:
-                print(f"===News Fetch Failed: HTTP Status {response.status_code}")
+                print(f"❗ News Fetch Failed: HTTP Status {response.status_code}")
         except Exception as ne:
-            print(f"===News Scraper Crash on {ticker}: {ne}")
+            print(f"❗ News Scraper Crash on {ticker}: {ne}")
 
-    print("\n=== Pipeline Execution Completed Successfully ===")
+    print("\n🏁 Pipeline Execution Completed Successfully 🏁")
 
 if __name__ == "__main__":
     process_pipeline()
