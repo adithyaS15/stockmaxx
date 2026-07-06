@@ -110,5 +110,13 @@ def process_pipeline():
 
     print("\n🏁 Pipeline Execution Completed Successfully 🏁")
 
+def cloud_handler(request):
+    """GCP Cloud Function Entry Point (HTTP Trigger)"""
+    try:
+        process_pipeline()
+        return "Pipeline completed successfully.", 200
+    except Exception as e:
+        return f"Pipeline failed: {str(e)}", 500
+
 if __name__ == "__main__":
     process_pipeline()
