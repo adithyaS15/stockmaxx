@@ -1,5 +1,5 @@
 requests
 beautifulsoup4
-nlxml
+lxml
 yfinance
 google-cloud-pubsub
