@@ -96,7 +96,7 @@ def process_pipeline():
                     if title:
                         news_payload = {
                             "ticker": ticker,
-                            "headline": title.strip(),
+                            "headlines": title.strip(),
                             "date": clean_date
                         }
                         msg_id = publish_to_cloud(NEWS_TOPIC, news_payload, publisher, PROJECT_ID)
