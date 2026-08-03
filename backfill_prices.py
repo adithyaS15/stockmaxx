@@ -10,7 +10,7 @@ if df.empty:
 	print("🔴 Data retrieval failed. 🔴")
 	exit()
 
-df['date'] = df['Data'].dt.strftime('%Y-%m-%d')
+df['date'] = df['Date'].dt.strftime('%Y-%m-%d')
 df['ticker'] = 'NVDA'
 df['open'] = df['Open'].round(2)
 df['high'] = df['High'].round(2)
