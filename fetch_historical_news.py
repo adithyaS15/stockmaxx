@@ -40,7 +40,7 @@ print(f"Scraped {len(rows)} news headlines...")
 
 if rows:
     status = client.insert_rows_json(table_id, rows)
-    if status:
+    if not status: // OK, IDK why I need not, I have used the same blocks before
         print("🟢 Successfully backfilled headlines! 🟢")
     else:
         print(f"🔴 Encountered errors: {status} 🔴")
