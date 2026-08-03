@@ -17,7 +17,7 @@ google_news = GNews(
 news = google_news.get_news('NVIDA')
 rows = []
 
-for article in results:
+for article in news:
     title = article.get('title','').strip()
     pub_date_str = article.get('published date', '')
 
