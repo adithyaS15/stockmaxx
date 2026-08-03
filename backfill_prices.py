@@ -25,7 +25,7 @@ table_id = "stockmaxx.stock_warehouse.market_prices"
 
 job_config = bigquery.LoadJobConfig(write_disposition = bigquery.WriteDisposition.WRITE_APPEND)
 
-job = client.load_table_from_datafeam(df_final, table_id, job_config)
+job = client.load_table_from_dataframe(df_final, table_id, job_config)
 
 print("🟢 Successfully backfilled market price gap in BQ! 🟢")
 
