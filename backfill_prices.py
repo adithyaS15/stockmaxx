@@ -23,7 +23,7 @@ df_final = df[['ticker', 'date', 'open', 'high', 'low', 'close','volume']]
 client = bigquery.Client()
 table_id = "stockmaxx.stock_warehouse.market_prices"
 
-job_config = bigquery.LoadJobConfig(write_disposition = bigquery.writeDisposition.WRITE_APPEND)
+job_config = bigquery.LoadJobConfig(write_disposition = bigquery.WriteDisposition.WRITE_APPEND)
 
 job = client.load_table_from_datafeam(df_final, table_id, job_config)
 
