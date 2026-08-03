@@ -40,7 +40,7 @@ print(f"Scraped {len(rows)} news headlines...")
 
 if rows:
     status = client.insert_rows_json(table_id, rows)
-    if push:
+    if status:
         print("🟢 Successfully backfilled headlines! 🟢")
     else:
         print(f"🔴 Encountered errors: {status} 🔴")
