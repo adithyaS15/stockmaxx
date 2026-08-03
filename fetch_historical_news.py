@@ -30,7 +30,7 @@ for article in news:
     scores = analyzer.polarity_scores(title)
     compound_score = round(scores['compound'],4)
 
-    rows_to_insert.append({
+    rows.append({
             "ticker": "NVDA",
             "headlines": title,
             "date": clean_date
