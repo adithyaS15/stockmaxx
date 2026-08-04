@@ -41,7 +41,7 @@ print(f"Scraped {len(rows)} news headlines... and now also sentiment score!")
 
 if rows:
     status = client.insert_rows_json(table_id, rows)
-    if not status: // OK, IDK why I need not, I have used the same blocks before
+    if not status: # OK, IDK why I need not, I have used the same blocks before
         print("🟢 Successfully backfilled headlines and sentiment score! 🟢")
     else:
         print(f"🔴 Encountered errors: {status} 🔴")
