@@ -11,7 +11,7 @@ google_news = GNews(
         language = 'en',
         country = 'US',
         period = '30d',
-        max_results = 30
+        max_results = 50
     )
 
 news = google_news.get_news('NVIDA')
@@ -33,14 +33,15 @@ for article in news:
     rows.append({
             "ticker": "NVDA",
             "headlines": title,
-            "date": clean_date
+            "date": clean_date,
+            "sentiment_score": compound_score
         })
 
-print(f"Scraped {len(rows)} news headlines...")
+print(f"Scraped {len(rows)} news headlines... and now also sentiment score!")
 
 if rows:
     status = client.insert_rows_json(table_id, rows)
     if not status: // OK, IDK why I need not, I have used the same blocks before
-        print("🟢 Successfully backfilled headlines! 🟢")
+        print("🟢 Successfully backfilled headlines and sentiment score! 🟢")
     else:
         print(f"🔴 Encountered errors: {status} 🔴")
