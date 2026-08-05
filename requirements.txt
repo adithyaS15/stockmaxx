@@ -3,3 +3,7 @@ beautifulsoup4
 lxml
 yfinance
 google-cloud-pubsub
+gnews
+vaderSentiment
+pandas
+google-cloud-bigquery
