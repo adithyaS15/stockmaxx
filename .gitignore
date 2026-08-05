@@ -1,0 +1,28 @@
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Byte-Code & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints
+
+# Environment Variables & GCP Service Account Keys
+.env
+*.json
+!gcp_config.json # Keep if you have a public template, but block private keys
+
+# Mac OS & IDE Metadata
+.DS_Store
+.vscode/
+.idea/
+
+# Testing & Logs
+*.log
+.pytest_cache/

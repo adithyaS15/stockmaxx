@@ -1,9 +1,9 @@
 requests
 beautifulsoup4
 lxml
-yfinance
-google-cloud-pubsub
 gnews
+yfinance
 vaderSentiment
 pandas
+google-cloud-pubsub
 google-cloud-bigquery
