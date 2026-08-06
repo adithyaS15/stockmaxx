@@ -20,14 +20,14 @@ if df.empty:
     print("No rows need backfilling!")
     exit()
 
-print(f"Computing VADER sentiment scores for {len(df)} headlines in memory...")
+df['date'] = df['date'].astype(str)
+df = df.drop_duplicates(subset=['ticker', 'date', 'headlines'])
+
+print(f"Computing VADER sentiment scores for {len(df)} unique headlines...")
 # Calculate sentiment in memory across the pandas series
 df['sentiment_score'] = df['headlines'].apply(
     lambda h: round(analyzer.polarity_scores(str(h))['compound'], 4)
 )
-
-# Format date column as string for seamless staging schema matching
-df['date'] = df['date'].astype(str)
 
 print("Uploading batch to BigQuery temporary staging table...")
 job_config = bigquery.LoadJobConfig(
