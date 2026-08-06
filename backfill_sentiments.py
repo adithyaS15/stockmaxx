@@ -1,41 +1,60 @@
+import pandas as pd
 from google.cloud import bigquery
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 client = bigquery.Client()
 analyzer = SentimentIntensityAnalyzer()
-table_id = "`stockmaxx.stock_warehouse.news_headlines`"
 
-select_query = f"""SELECT ticker, headlines, date FROM {table_id} WHERE sentiment_score IS NULL"""
+target_table = "stockmaxx.stock_warehouse.news_headlines"
+staging_table = "stockmaxx.stock_warehouse.temp_sentiment_staging"
 
-rows = list(client.query(select_query).result())
+print("Fetching headlines missing sentiment scores...")
+query = f"""
+SELECT ticker, headlines, date
+FROM `{target_table}`
+WHERE sentiment_score IS NULL
+"""
+df = client.query(query).to_dataframe()
 
-print(f"Found {len(rows)} headlines to backfill")
+if df.empty:
+    print("No rows need backfilling!")
+    exit()
 
-updated_count = 0
+print(f"Computing VADER sentiment scores for {len(df)} headlines in memory...")
+# Calculate sentiment in memory across the pandas series
+df['sentiment_score'] = df['headlines'].apply(
+    lambda h: round(analyzer.polarity_scores(str(h))['compound'], 4)
+)
 
-for row in rows:
-    headline = row["headlines"]
-    ticker = row["ticker"]
-    date = str(row["date"])
+# Format date column as string for seamless staging schema matching
+df['date'] = df['date'].astype(str)
 
-    scores = analyzer.polarity_scores(headline)
-    compound_score = round(scores["compound"], 4)
-    # safe_headline = headline.replace("'", "\\'")
+print("Uploading batch to BigQuery temporary staging table...")
+job_config = bigquery.LoadJobConfig(
+    write_disposition="WRITE_TRUNCATE",
+    schema=[
+        bigquery.SchemaField("ticker", "STRING"),
+        bigquery.SchemaField("headlines", "STRING"),
+        bigquery.SchemaField("date", "STRING"),
+        bigquery.SchemaField("sentiment_score", "FLOAT64"),
+    ]
+)
+load_job = client.load_table_from_dataframe(df, staging_table, job_config=job_config)
+load_job.result()  # Wait for upload to complete
 
-    update_query = f"""
-    UPDATE {table_id} SET sentiment_score = @sentiment_score WHERE ticker = @ticker AND date = @date AND headlines = @headlines
-    """
+print("Executing bulk MERGE operation in BigQuery...")
+merge_sql = f"""
+MERGE `{target_table}` T
+USING `{staging_table}` S
+ON T.ticker = S.ticker
+   AND CAST(T.date AS STRING) = S.date
+   AND T.headlines = S.headlines
+WHEN MATCHED THEN
+  UPDATE SET T.sentiment_score = S.sentiment_score;
+"""
+client.query(merge_sql).result()
 
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("sentiment_score", "FLOAT64", compound_score),
-            bigquery.ScalarQueryParameter("ticker", "STRING", ticker),
-            bigquery.ScalarQueryParameter("date", "STRING", date),
-            bigquery.ScalarQueryParameter("headlines", "STRING", headline),
-        ]
-    )
+print("Cleaning up staging table...")
+client.delete_table(staging_table, not_found_ok=True)
 
-    client.query(update_query, job_config=job_config).result()
-    updated_count += 1
-
-print(f"🟢 Successfully updated {updated_count} headlines with sentiment scores! 🟢")
+print(f"🟢 Successfully backfilled {len(df)} sentiment scores! 🟢")
