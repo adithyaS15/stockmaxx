@@ -5,8 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 import yfinance as yf
 from google.cloud import pubsub_v1
+import functions_framework
+import pandas as pd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 warnings.filterwarnings("ignore")
+
+# Adding Analyzer
+analyzer = SentimentIntensityAnalyzer()
+publisher = pubsub_v1.PublisherClient()
 
 # 1. Pipeline Configuration
 PROJECT_ID = "stockmaxx"
@@ -94,6 +101,10 @@ def process_pipeline():
                             clean_date = datetime.now().strftime("%Y-%m-%d") # Fixed lowercase 'none' -> datetime string fallback
 
                     if title:
+                        clean_title = title.strip()
+                        # Scoring sentiment
+                        sentiment_score = round(analyzer.polarity_scores(clean_title)["compound"], 4)
+
                         news_payload = {
                             "ticker": ticker,
                             "headlines": title.strip(),
@@ -110,13 +121,15 @@ def process_pipeline():
 
     print("\n🏁 Pipeline Execution Completed Successfully 🏁")
 
-def cloud_handler(request):
-    """GCP Cloud Function Entry Point (HTTP Trigger)"""
+@functions_framework.http
+def cloud_handler(requests):
+    # GCP cloud function entry point
     try:
         process_pipeline()
-        return "Pipeline completed successfully.", 200
+        return "🟢 Pipeline completed successfully! 🟢", 200
     except Exception as e:
-        return f"Pipeline failed: {str(e)}", 500
+        return f"❗ Pipeline failed ❗ \n{str(e)}", 500
+
 
 if __name__ == "__main__":
     process_pipeline()
