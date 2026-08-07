@@ -108,7 +108,8 @@ def process_pipeline():
                         news_payload = {
                             "ticker": ticker,
                             "headlines": title.strip(),
-                            "date": clean_date
+                            "date": clean_date,
+                            "sentiment_score": sentiment_score
                         }
                         msg_id = publish_to_cloud(NEWS_TOPIC, news_payload, publisher, PROJECT_ID)
                         if msg_id: news_count += 1
