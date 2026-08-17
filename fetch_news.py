@@ -1,3 +1,4 @@
+# This and fetch_prices.py were completely generated. Audit this and the other one. 
 import json
 import warnings
 from datetime import datetime
