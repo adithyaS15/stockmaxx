@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from main import PROJECT_ID
 
 PROJECT_ID = "stockmaxx"
-DATASET_ID = "stock_warehose"
+DATASET_ID = "stock_warehouse"
 SOURCE_VIEW = f"{PROJECT_ID}.{DATASET_ID}.daily_asset_summary"
 TARGET_TABLE = f"{PROJECT_ID}.{DATASET_ID}.ml_predictions"
 
