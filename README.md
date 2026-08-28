@@ -11,8 +11,19 @@ Stockmaxx is an end-to-end data engineering and machine learning pipeline hosted
 
 ### Environment Setup
 * Clone repository and navigate to the project directory
-* Activate the virsual environmnet
-  source .venv/bin/activate.fish
-* Install dependencies using the requirements.txt
+* Activate the virtual environmnet
+  * For Fish shell
+    ```sh
+    source .venv/bin/activate.fish
+    ```
+  * For Bash/Zsh
+    ```sh
+    source .venv/bin/activate
+    ```
+* Install the dependencies
+  ```sh
+  pip install -r requirements.txt
+  ```
+
 
 ## ⚡ Execution and Maintenance
