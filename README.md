@@ -1,4 +1,4 @@
-## Stockmaxx - A Serverless GCP Market & Sentiment Ingestion Pipeline
+## 📈 Stockmaxx - A Serverless GCP Market & Sentiment Ingestion Pipeline
 
 Stockmaxx is an end-to-end data engineering and machine learning pipeline hosted on Google Cloud Platform (GCP). It streams real-time stock and cryptocurrency prices alongside financial news headlines, computes VADER natural language sentiment scores, engineers lag and rolling features, and executes daily directional ML predictions stored directly in BigQuery.
 
