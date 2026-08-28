@@ -1,11 +1,8 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from google.cloud import bigquery
 from sklearn.ensemble import RandomForestClassifier
-
-# I wish I had this stupid extension before. Would've made it so much easier
-from main import PROJECT_ID
 
 PROJECT_ID = "stockmaxx"
 DATASET_ID = "stock_warehouse"
@@ -15,27 +12,30 @@ TARGET_TABLE = f"{PROJECT_ID}.{DATASET_ID}.ml_predictions"
 client = bigquery.Client(project=PROJECT_ID)
 
 def fetch_data() -> pd.DataFrame:
-    print("Fetching daily summary history from BQ...")
     query = f"""
-    SELECT ticker, date, close_price, daily_return_pct, volume, average_sentiment_score, headline_count
-    FROM `{SOURCE_VIEW}` ORDER BY ticker, date ASC
+    SELECT 
+      ticker, 
+      date, 
+      close_price, 
+      daily_return_pct, 
+      volume, 
+      headline_count, 
+      avg_sentiment_score
+    FROM `{SOURCE_VIEW}`
+    ORDER BY ticker, date ASC;
     """
+    return client.query(query).to_dataframe()
 
-    df = client.query(query).to_dataframe()
-    df["date"] = pd.to_datetime(df["date"])
-    return df
-
-def engineer_features(df: pd.DataFrame) -> pd.DateFrame: 
+def engineer_features(df: pd.DataFrame) -> pd.DataFrame: 
     print("Engineering lag features and rolling sentiment indicators...")
     df = df.sort_values(by=["ticker", "date"]).reset_index(drop=True)
 
-    # If tomorrow's price will be higher than today's
+    # Direction target (1 if next day close is higher, else 0)
     df["next_close"] = df.groupby("ticker")["close_price"].shift(-1)
     df["target"] = (df["next_close"] > df["close_price"]).astype(float)
-
     df.loc[df["next_close"].isna(), "target"] = np.nan
 
-    # Lag features, price and sentiment memory
+    # Lag features
     df["return_lag_1"] = df.groupby("ticker")["daily_return_pct"].shift(1)
     df["return_lag_2"] = df.groupby("ticker")["daily_return_pct"].shift(2)
 
@@ -50,34 +50,27 @@ def engineer_features(df: pd.DataFrame) -> pd.DateFrame:
 
     return df
 
-def train_and_predict(df: pd.DataFrame):
+def train_and_predict(df: pd.DataFrame) -> pd.DataFrame:
     feature_cols = [
         "daily_return_pct", "avg_sentiment_score", "headline_count",
         "return_lag_1", "return_lag_2", "sentiment_lag_1", "sentiment_lag_2",
         "sentiment_3d_avg", "volatility_5d", "price_to_sma_ratio"
     ]
 
-    # cleaning rows
     cleaned_df = df.dropna(subset=feature_cols).copy()
-
-    # training time
-    train_date = cleaned_df.dropna(subset=["target"]).copy()
-
-    #inference set
-    inference_date = cleaned_df.groupby("ticker").last().reset_index()
+    train_data = cleaned_df.dropna(subset=["target"]).copy()
+    inference_data = cleaned_df.groupby("ticker").last().reset_index()
 
     print(f"Training set size: {len(train_data)} rows across all tickers.")
     
     X_train = train_data[feature_cols]
     y_train = train_data["target"].astype(int)
 
-    # Train Random Forest Classifier
     model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
     model.fit(X_train, y_train)
 
-    # Generate predictions for latest date
     X_inference = inference_data[feature_cols]
-    probabilities = model.predict_proba(X_inference)[:, 1] # Probability of "UP"
+    probabilities = model.predict_proba(X_inference)[:, 1]
 
     predictions = []
     for idx, row in inference_data.iterrows():
@@ -92,7 +85,7 @@ def train_and_predict(df: pd.DataFrame):
             "close_price": float(row["close_price"]),
             "latest_sentiment": float(row["avg_sentiment_score"]),
             "model_version": "v1.0-RandomForest",
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc)
         })
 
     return pd.DataFrame(predictions)
@@ -101,7 +94,7 @@ def save_predictions_to_bigquery(pred_df: pd.DataFrame):
     print(f"Writing {len(pred_df)} predictions to BigQuery table `{TARGET_TABLE}`...")
     
     job_config = bigquery.LoadJobConfig(
-        write_disposition="WRITE_APPEND", # Appends daily predictions over time
+        write_disposition="WRITE_APPEND",
         schema=[
             bigquery.SchemaField("ticker", "STRING"),
             bigquery.SchemaField("as_of_date", "DATE"),
@@ -127,4 +120,3 @@ if __name__ == "__main__":
     print(predictions_df[["ticker", "as_of_date", "predicted_direction", "up_probability", "latest_sentiment"]])
     
     save_predictions_to_bigquery(predictions_df)
-    
