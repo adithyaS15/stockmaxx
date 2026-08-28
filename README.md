@@ -7,7 +7,8 @@ Stockmaxx is an end-to-end data engineering and machine learning pipeline hosted
 ### Prerequisites
 * Python 3.11+
 * Google Cloud SDK (`gcloud` CLI)
-* Access to a GCP Project with BigQuery, Pub/Sub, and Cloud Functions enabled
+* BigQuery CLI(`bq`) enabled
+* Key Python dependencies: `google-cloud-bigquery`, `pandas`, `nltk`
 
 ### Environment Setup
 * Clone repository and navigate to the project directory
@@ -24,6 +25,5 @@ Stockmaxx is an end-to-end data engineering and machine learning pipeline hosted
   ```sh
   pip install -r requirements.txt
   ```
+NOTE: The regular 'requirements.txt' file should be enough to run everything, but if you want the exact replica of the environment, use 'requirements-dev.txt'
 
-
-## ⚡ Execution and Maintenance
