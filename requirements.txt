@@ -8,3 +8,7 @@ pandas
 google-cloud-pubsub
 google-cloud-bigquery
 functions-framework
+scikit-learn
+google-cloud-bigquery-storage
+pyarrow
+db-dtypes
