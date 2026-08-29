@@ -47,10 +47,9 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
      gcloud config set project <project_name>
      ```
    * Enable required GCP APIs
-   ```sh
-   # Enable required GCP APIs
-   gcloud services enable bigquery.googleapis.com run.googleapis.com cloudscheduler.googleapis.com artifactregistry.googleapis.com
-   ```
+     ```sh
+     gcloud services enable bigquery.googleapis.com run.googleapis.com cloudscheduler.googleapis.com artifactregistry.googleapis.com
+     ```
 3. Create BigQuery dataset and tables
    * Creating dataset
      ```sh
