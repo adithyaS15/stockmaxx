@@ -33,7 +33,6 @@ Additional modules include:
 NOTE: The regular 'requirements.txt' file should be enough to run everything, but if you want the exact replica of the environment, use 'requirements-dev.txt'
 
 ### GCP Setup
-
 1. GCP Project and API activation
    ```sh
    # Log in to Google Cloud
@@ -46,4 +45,16 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
    gcloud services enable bigquery.googleapis.com run.googleapis.com cloudscheduler.googleapis.com artifactregistry.googleapis.com
    ```
 2. Create BigQuery dataset and tables
+   ```sh
+   # Creating dataset
+   bq mk --location=us-central1 --dataset <project_name>:<dataset_name>
 
+   # Create news headlines table
+   bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>`(ticker STRING, headlines STRING, date    DATE, sentiment_score FLOAT 64)'
+   
+   # Create stock prices table
+
+   # Create ML predictions table
+   ```
+   
+## Operations Guide
