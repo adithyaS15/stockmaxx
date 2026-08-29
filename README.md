@@ -16,8 +16,12 @@ Additional modules include:
 * Key Python dependencies: `google-cloud-bigquery`, `pandas`, `nltk`
 
 ### Environment Setup
-* Clone repository and navigate to the project directory
+* Clone repository or download it and navigate to the project directory
 * Create and activate the virtual environmnet
+  * Create virtual environment
+    ```sh
+    python3 -m venv .venv
+    ```
   * For Fish shell activation
     ```sh
     source .venv/bin/activate.fish
@@ -34,27 +38,39 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
 
 ### GCP Setup
 1. GCP Project and API activation
+   * Log in to Google Cloud
+     ```sh
+     gcloud auth login
+     ```
+   * Set your active GCP project
+     ```sh
+     gcloud config set project <project_name>
+     ```
+   * Enable required GCP APIs
    ```sh
-   # Log in to Google Cloud
-   gcloud auth login
-
-   # Set your active GCP project
-   gcloud config set project <project_name>
-
    # Enable required GCP APIs
    gcloud services enable bigquery.googleapis.com run.googleapis.com cloudscheduler.googleapis.com artifactregistry.googleapis.com
    ```
-2. Create BigQuery dataset and tables
+3. Create BigQuery dataset and tables
+   * Creating dataset
+     ```sh
+     bq mk --location=us-central1 --dataset <project_name>:<dataset_name>
+     ```
+   * Create news headlines table
+      ```sh
+     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>`(ticker STRING, headlines STRING, date DATE, sentiment_score FLOAT 64)'
+     ```
+   * Create stock prices table
+    ```sh
+    bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, date DATE, open FLOAT64, high FLOAT64, low FLOAT64, close FLOAT64, volume INTEGER)'
+    ```
+   * Create ML predictions table
    ```sh
-   # Creating dataset
-   bq mk --location=us-central1 --dataset <project_name>:<dataset_name>
-
-   # Create news headlines table
-   bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>`(ticker STRING, headlines STRING, date    DATE, sentiment_score FLOAT 64)'
-   
-   # Create stock prices table
-
-   # Create ML predictions table
+   bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, as_of_date DATE, predicted_direction STRING, up_probability FLOAT64, latest_sentiment FLOAT64)'
    ```
    
 ## Operations Guide
+
+1. Running the ML pipeline Job(Cloud Run)
+2. Viewing daily predictions
+3. Backfilling any missing sentiment scores
