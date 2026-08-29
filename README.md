@@ -60,13 +60,13 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
      bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>`(ticker STRING, headlines STRING, date DATE, sentiment_score FLOAT 64)'
      ```
    * Create stock prices table
-    ```sh
-    bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, date DATE, open FLOAT64, high FLOAT64, low FLOAT64, close FLOAT64, volume INTEGER)'
-    ```
+     ```sh
+     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, date DATE, open FLOAT64, high FLOAT64, low FLOAT64, close FLOAT64, volume INTEGER)'
+     ```
    * Create ML predictions table
-   ```sh
-   bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, as_of_date DATE, predicted_direction STRING, up_probability FLOAT64, latest_sentiment FLOAT64)'
-   ```
+     ```sh
+     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, as_of_date DATE, predicted_direction STRING, up_probability FLOAT64, latest_sentiment FLOAT64)'
+     ```
    
 ## Operations Guide
 
