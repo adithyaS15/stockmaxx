@@ -7,6 +7,21 @@ Additional modules include:
 - [ ] Dashboard  
 - [ ] Congressional trading tracker - Ingesting US senate financial disclosures
 
+## Repository structure 
+
+```sh
+stockky/
+├── main.py                  # Pipeline execution entrypoint
+├── ml_pipeline.py           # Feature engineering, model training & prediction logic
+├── fetch_daily_news.py      # Daily news scraper & inline VADER sentiment calculator
+├── backfill.py              # Deduplicated backfill utility for missing sentiment scores
+├── Dockerfile               # Container spec for GCP Cloud Run deployment
+├── .dockerignore            # Excludes local virtualenvs and cache from container builds
+├── requirements.txt         # Production runtime dependencies
+├── requirements-dev.txt     # Development and testing dependencies
+└── README.md                # System documentation
+```
+
 ## Getting Started
 
 ### Prerequisites
