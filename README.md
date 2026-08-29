@@ -9,6 +9,7 @@ Additional modules include:
 
 ## Repository structure 
 
+```sh
 stockky/
 ├── main.py                  # Pipeline execution entrypoint
 ├── ml_pipeline.py           # Feature engineering, model training & prediction logic
@@ -19,6 +20,7 @@ stockky/
 ├── requirements.txt         # Production runtime dependencies
 ├── requirements-dev.txt     # Development and testing dependencies
 └── README.md                # System documentation
+```
 
 ## Getting Started
 
