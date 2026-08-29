@@ -33,15 +33,15 @@ stockky/
 ### Environment Setup
 * Clone repository or download it and navigate to the project directory
 *  Create and activate the virtual environmnet
-  * Create virtual environment
+   * Create virtual environment
     ```sh
     python3 -m venv .venv
     ```
-  * For Fish shell activation
+   * For Fish shell activation
     ```sh
     source .venv/bin/activate.fish
     ```
-  * For Bash/Zsh activation
+   * For Bash/Zsh activation
     ```sh
     source .venv/bin/activate
     ```
