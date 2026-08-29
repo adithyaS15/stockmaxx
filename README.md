@@ -31,8 +31,8 @@ stockky/
 * Key Python dependencies: `google-cloud-bigquery`, `pandas`, `nltk`
 
 ### Environment Setup
-1. Clone repository or download it and navigate to the project directory
-2. Create and activate the virtual environmnet
+* Clone repository or download it and navigate to the project directory
+*  Create and activate the virtual environmnet
   * Create virtual environment
     ```sh
     python3 -m venv .venv
@@ -45,7 +45,7 @@ stockky/
     ```sh
     source .venv/bin/activate
     ```
-3. Install the dependencies
+* Install the dependencies
   ```sh
   pip install -r requirements.txt
   ```
