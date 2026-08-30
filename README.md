@@ -59,7 +59,7 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
      ```
    * Set your active GCP project
      ```sh
-     gcloud config set project <project_name>
+     gcloud config set project stockmaxx
      ```
    * Enable required GCP APIs
      ```sh
@@ -68,19 +68,19 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
 3. Create BigQuery dataset and tables
    * Creating dataset
      ```sh
-     bq mk --location=us-central1 --dataset <project_name>:<dataset_name>
+     bq mk --location=us-central1 --dataset stockmaxx:stock_warehose
      ```
    * Create news headlines table
       ```sh
-     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>`(ticker STRING, headlines STRING, date DATE, sentiment_score FLOAT 64)'
+     bq query 'CREATE TABLE IF NOT EXISTS `stockmaxx.stock_warehouse.news_headlines`(ticker STRING, headlines STRING, date DATE, sentiment_score FLOAT 64)'
      ```
    * Create stock prices table
      ```sh
-     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, date DATE, open FLOAT64, high FLOAT64, low FLOAT64, close FLOAT64, volume INTEGER)'
+     bq query 'CREATE TABLE IF NOT EXISTS `stockmaxx.stock_warehouse.market_prices` (ticker STRING, date DATE, open FLOAT64, high FLOAT64, low FLOAT64, close FLOAT64, volume INTEGER)'
      ```
    * Create ML predictions table
      ```sh
-     bq query 'CREATE TABLE IF NOT EXISTS `<project_name>.<dataset_name>.<table_name>` (ticker STRING, as_of_date DATE, predicted_direction STRING, up_probability FLOAT64, latest_sentiment FLOAT64)'
+     bq query 'CREATE TABLE IF NOT EXISTS `stockmaxx.stock_warehouse.ml_predictions` (ticker STRING, as_of_date DATE, predicted_direction STRING, up_probability FLOAT64, latest_sentiment FLOAT64)'
      ```
    
 ## Operations Guide
