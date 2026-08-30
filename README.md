@@ -34,17 +34,17 @@ stocmaxx/
 * Clone repository or download it and navigate to the project directory
 *  Create and activate the virtual environmnet
    * Create virtual environment
-     ```sh
-      python3 -m venv .venv
-      ```
+    ```sh
+    python3 -m venv .venv
+    ```
    * For Fish shell activation
-     ```sh
-      source .venv/bin/activate.fish
-     ```
+    ```sh
+    source .venv/bin/activate.fish
+    ```
    * For Bash/Zsh activation
-     ```sh
-      source .venv/bin/activate
-     ```
+    ```sh
+    source .venv/bin/activate
+    ```
 * Install the dependencies
   ```sh
   pip install -r requirements.txt
