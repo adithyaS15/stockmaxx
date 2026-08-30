@@ -10,7 +10,7 @@ Additional modules include:
 ## Repository structure 
 
 ```sh
-stockky/
+stocmaxx/
 ├── main.py                  # Pipeline execution entrypoint
 ├── ml_pipeline.py           # Feature engineering, model training & prediction logic
 ├── fetch_daily_news.py      # Daily news scraper & inline VADER sentiment calculator
