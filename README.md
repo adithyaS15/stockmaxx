@@ -5,7 +5,7 @@ Stockmaxx is an end-to-end data engineering and machine learning pipeline hosted
 Additional modules include: 
 - [x] ML model for 'prediction' 
 - [ ] Dashboard  
-- [ ] Congressional trading tracker - Ingesting US senate financial disclosures
+- [ ] Congressional trading tracker - Ingesting US senate financial disclosures (maybe)
 
 ## Repository structure 
 
