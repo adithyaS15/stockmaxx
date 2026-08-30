@@ -93,11 +93,11 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
 
 * Problem: Predictions return 0.0 for latest_sentiment.
   * Cause: Headlines table contains NULL sentiment values.
-  * Fix: Run ```sh python3 backfill.py``` to calculate missing scores, then rerun the ML job.
+  * Fix: Run `python3 backfill.py` to calculate missing scores, then rerun the ML job.
 
 * Problem: Duplicate rows appear in ml_predictions for the same date.
   * Cause: Multiple manual runs appended data without clearing today's batch.
-  * Fix: Run ```sh bq query --use_legacy_sql=false 'DELETE FROM stockmaxx.stock_warehouse.ml_predictions WHERE as_of_date = CURRENT_DATE()'```.
+  * Fix: Run `bq query --use_legacy_sql=false 'DELETE FROM stockmaxx.stock_warehouse.ml_predictions WHERE as_of_date = CURRENT_DATE()'`.
 
 * Problem: FutureWarning: Loading pandas DataFrame into BigQuery will require pandas-gbq...
   * Cause: pandas-gbq package missing inside the runtime container.
