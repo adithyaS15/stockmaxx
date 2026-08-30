@@ -89,6 +89,19 @@ NOTE: The regular 'requirements.txt' file should be enough to run everything, bu
 2. Viewing daily predictions
 3. Backfilling any missing sentiment scores
 
+## Automating Daily Execution
+
+To run predictions automatically every weekday after market close (e.g., 5:00 PM EST / 21:00 UTC):
+```sh
+gcloud scheduler jobs create http ml-pipeline-daily-schedule \
+  --location=us-central1 \
+  --schedule="0 21 * * 1-5" \
+  --time-zone="Etc/UTC" \
+  --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/stockmaxx/jobs/ml-pipeline-job:run" \
+  --http-method=POST \
+  --oauth-service-account-email="172320101422-compute@developer.gserviceaccount.com"
+```
+
 ## Troubleshooting
 
 * Problem: Predictions return 0.0 for latest_sentiment.
