@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from google.cloud import bigquery
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -37,12 +38,33 @@ ticker_df = df[df["ticker"] == ticker]
 if not ticker_df.empty:
     latest = ticker_df.iloc[-1]
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Closing Price", f"${latest['closing_price']:.2f}")
-    col2.metric("Sentiment Score", f"{latest['avg_sentiment']:.4f}")
-    col3.metric("Direction Signal", str(latest["predicted_direction"]))
-    
-    up_prob = latest["up_probability"]
-    col4.metric("Up Probability", f"{up_prob:.2%}" if up_prob is not None and not st.experimental_get_query_params() and str(up_prob) != 'nan' else "N/A")
+
+    # Helper function for safe numeric validation
+    def is_valid(val):
+        return pd.notna(val) and str(val).strip().lower() not in ("nan", "none", "null", "")
+
+    # Closing Price
+    close_val = latest["closing_price"]
+    col1.metric("Closing Price", f"${close_val:.2f}" if is_valid(close_val) else "N/A")
+
+    # Sentiment Score
+    sentiment_val = latest["avg_sentiment"]
+    col2.metric("Sentiment Score", f"{sentiment_val:.4f}" if is_valid(sentiment_val) else "N/A")
+
+    # Direction Signal
+    direction_val = latest["predicted_direction"]
+    if is_valid(direction_val):
+        try:
+            direction_str = str(int(float(direction_val)))
+        except (ValueError, TypeError):
+            direction_str = str(direction_val)
+    else:
+        direction_str = "N/A"
+    col3.metric("Direction Signal", direction_str)
+
+    # Up Probability
+    prob_val = latest["up_probability"]
+    col4.metric("Up Probability", f"{prob_val:.2%}" if is_valid(prob_val) else "N/A")
 
 # Dual-Axis Price & Sentiment Overlay Chart
 fig = make_subplots(specs=[[{"secondary_y": True}]])
