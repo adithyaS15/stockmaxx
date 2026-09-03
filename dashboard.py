@@ -5,19 +5,31 @@ from plotly.subplots import make_subplots
 
 st.set_page_config(page_title = "Stockmaxxing Time")
 
-client = bigquery.Client(project = "stockmaxx")
+# Cache the BigQuery client connection resource
+@st.cache_resource
+def get_bq_client():
+    return bigquery.Client(project = "stockmaxx")
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl = 3600)
 def load_data():
-    query = ""
+    client = get_bq_client()
+    query = """
+        SELECT * 
+        FROM `stockmaxx.stock_warehouse.daily_market_prediction`
+        ORDER BY date ASC
+    """
     return client.query(query).to_dataframe()
 
 df = load_data()
 
-# check the documentation for more info
+# Header Section
 st.title("Stockmaxx : Market and Sentiment Analysis")
-# st.markdown..?
 
+if df.empty:
+    st.warning("No data retrieved from BigQuery view.")
+    st.stop()
+
+# Sidebar Control
 ticker = st.sidebar.selectbox("Select ticker symbol: ", df["ticker"].unique())
 ticker_df = df[df["ticker"] == ticker]
 
@@ -30,7 +42,7 @@ if not ticker_df.empty:
     col3.metric("Direction Signal", str(latest["predicted_direction"]))
     
     up_prob = latest["up_probability"]
-    col4.metric("Up Probability", f"{up_prob:.2%}" if up_prob is not None else "N/A")
+    col4.metric("Up Probability", f"{up_prob:.2%}" if up_prob is not None and not st.experimental_get_query_params() and str(up_prob) != 'nan' else "N/A")
 
 # Dual-Axis Price & Sentiment Overlay Chart
 fig = make_subplots(specs=[[{"secondary_y": True}]])
